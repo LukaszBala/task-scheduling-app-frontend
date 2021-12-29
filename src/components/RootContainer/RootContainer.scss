@@ -1,0 +1,15 @@
+.RootContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-top: 60px;
+}
+
+.root-container-content {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background-color: #222222;
+}

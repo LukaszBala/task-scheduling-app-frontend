@@ -1,0 +1,17 @@
+.TaskBoard {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.task-board-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1 1 auto;
+  margin: 20px;
+  padding: 10px;
+  box-shadow: 0 0 1px #888;
+  border-radius: 2px;
+}
