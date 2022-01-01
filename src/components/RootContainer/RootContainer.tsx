@@ -8,7 +8,6 @@ const RootContainer = () => (
         <SideNav/>
         <div className="root-container-content">
             <TaskBoard/>
-
         </div>
     </div>
 );

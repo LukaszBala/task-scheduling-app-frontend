@@ -1,0 +1,61 @@
+.Login {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  .option-wrapper {
+    display: block;
+    width: 300px;
+    margin: 20px;
+  }
+
+  .login-container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #888;
+    border-radius: 5px;
+  }
+
+  .login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+    h2 {
+      margin: 0;
+    }
+
+    p {
+      margin-bottom: 5px;
+    }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  .other-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .register-btn {
+    background-color: limegreen;
+  }
+}
+
+
+
+

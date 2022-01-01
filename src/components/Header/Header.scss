@@ -1,9 +1,7 @@
 .Header {
-  position: fixed;
-  top: 0;
-  left: 0;
   background-color: #222;
   min-height: 60px;
+  flex: 0 0 60px;
   color: #fff;
   box-sizing: border-box;
   width: 100%;
