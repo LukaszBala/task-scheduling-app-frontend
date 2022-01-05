@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import './Login.scss';
+import {useAppDispatch} from "../../hooks";
+import {login} from '../../store/slices/authSlice';
 
 const Login = () => {
 
     const [username, setUserName] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [showError, setShowError] = useState<boolean>(false)
+    const dispatch = useAppDispatch()
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -30,7 +33,7 @@ const Login = () => {
                                 Provided credentials are wrong
                             </div>
                             <div className='submit'>
-                                <button className='submit-btn' type="submit">Submit</button>
+                                <button className='submit-btn' type="submit" onClick={() => dispatch(login())}>Submit</button>
                             </div>
                         </form>
                     </div>
