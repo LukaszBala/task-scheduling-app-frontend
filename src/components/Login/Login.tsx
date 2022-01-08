@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './Login.scss';
 import {useAppDispatch} from "../../hooks";
 import {login} from '../../store/slices/authSlice';
+import {Button} from "@mui/material";
 
 const Login = () => {
 
@@ -33,7 +34,7 @@ const Login = () => {
                                 Provided credentials are wrong
                             </div>
                             <div className='submit'>
-                                <button className='submit-btn' type="submit" onClick={() => dispatch(login())}>Submit</button>
+                                <Button variant={'contained'} type="submit" onClick={() => dispatch(login())}>Submit</Button>
                             </div>
                         </form>
                     </div>
@@ -43,7 +44,7 @@ const Login = () => {
             <div className="option-wrapper">
                 <div className="other-options">
                     <h2>Does not have an account yet?</h2>
-                    <button className="register-btn">register</button>
+                    <Button variant={'contained'} color={'success'} >register</Button>
                 </div>
             </div>
         </div>

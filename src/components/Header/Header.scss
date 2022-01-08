@@ -6,8 +6,28 @@
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: baseline;
+  justify-content: space-between;
+  align-items: center;
   padding: 1em;
   box-shadow: inset 0 0 1px #888;
+}
+
+.title {
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.user {
+  margin: 0 10px;
+  border-right: 1px solid rgba(#ccc, 0.5);
+  border-left: 1px solid rgba(#ccc, 0.5);
+  .user-icon {
+    width: 40px;
+    height: 40px;
+  }
 }

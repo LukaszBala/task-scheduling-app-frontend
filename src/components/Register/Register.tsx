@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import './Register.scss';
+import {BuildTwoTone} from "@mui/icons-material";
+import {Button} from "@mui/material";
 
 const Register = () => {
     const [username, setUserName] = useState<string>('');
@@ -43,7 +45,7 @@ const Register = () => {
                                 Provided credentials are wrong
                             </div>
                             <div className='submit'>
-                                <button className='register-btn' type="submit">Submit</button>
+                                <Button variant={'contained'} color={'success'} type="submit">Submit</Button>
                             </div>
                         </form>
                     </div>
@@ -53,7 +55,7 @@ const Register = () => {
             <div className="option-wrapper">
                 <div className="other-options">
                     <h2>Already have an account?</h2>
-                    <button className="submit-btn">register</button>
+                    <Button variant={'contained'}>register</Button>
                 </div>
             </div>
         </div>
