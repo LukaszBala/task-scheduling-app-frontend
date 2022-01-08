@@ -1,6 +1,7 @@
 import React from 'react';
 import './TaskColumn.scss';
 import {Draggable, Droppable} from "react-beautiful-dnd";
+import TaskItem from "../TaskItem/TaskItem";
 
 export interface ColumnModel {
     name: string;
@@ -21,7 +22,7 @@ const TaskColumn = (props: TaskColumnModel) => {
     return (
         <div className="TaskColumn" data-testid="TaskColumn">
             <div className="task-column-title">
-                TaskColumn Component
+                {props.item.name}
             </div>
             <Droppable droppableId={String(props.itemId)} key={String(props.itemId)}>
                 {(provided, snapshot) =>
@@ -40,9 +41,6 @@ const TaskColumn = (props: TaskColumnModel) => {
                             {...provided.dragHandleProps}
                             style={{
                                 userSelect: "none",
-                                padding: 16,
-                                margin: "0 0 8px 0",
-                                minHeight: "50px",
                                 backgroundColor: snapshot.isDragging
                                     ? "#263B4A"
                                     : "#456C86",
@@ -50,7 +48,7 @@ const TaskColumn = (props: TaskColumnModel) => {
                                 ...provided.draggableProps.style
                             }}
                         >
-                            {item.content}
+                            <TaskItem item={item}/>
                         </div>)}</Draggable>)}
                     </div>}
 

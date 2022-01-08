@@ -2,6 +2,9 @@ import React, {useState} from 'react';
 import './TaskBoard.scss';
 import TaskColumn from "../TaskColumn/TaskColumn";
 import {DragDropContext} from "react-beautiful-dnd";
+import {FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput} from "@mui/material";
+import {Search} from "@mui/icons-material";
+import UserAvatar from "../UserAvatar/UserAvatar";
 
 const itemsFromBackend = [
     {id: 1, content: "First task"},
@@ -28,6 +31,11 @@ const columnsFromBackend = [
         name: "Done",
         items: []
     }
+]
+
+const users = [
+    {name: 'maciek długi'},
+    {name: 'henryk krótki'}
 ]
 
 const onDragEnd = (result: any, columns: any, setColumns: any) => {
@@ -62,10 +70,41 @@ const TaskBoard = () => {
     return (
         <div className="TaskBoard" data-testid="TaskBoard">
             <div className="task-board-content">
-                <DragDropContext onDragEnd={(dragEl) => onDragEnd(dragEl, columns, setColumns)}>
-                    {columns.map((column, index) => (
-                        <TaskColumn item={column} itemId={index} key={String(index)}/>))}
-                </DragDropContext>
+                <div className={'board-top'}>
+                    <FormControl sx={{m: 1, width: '25ch'}} variant="outlined">
+                        <InputLabel htmlFor="outlined-search">Search</InputLabel>
+                        <OutlinedInput
+                            id="outlined-search"
+                            // value={values.password}
+                            // onChange={handleChange('password')}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        // onClick={handleClickShowPassword}
+                                        // onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    ><Search/>
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Search"
+                        />
+                    </FormControl>
+
+                    <div className="users-list">
+                        {users.map(user => <UserAvatar name={user.name}/>)}
+
+                    </div>
+
+
+                </div>
+                <div className="columns">
+                    <DragDropContext onDragEnd={(dragEl) => onDragEnd(dragEl, columns, setColumns)}>
+                        {columns.map((column, index) => (
+                            <TaskColumn item={column} itemId={index} key={String(index)}/>))}
+                    </DragDropContext>
+                </div>
             </div>
 
         </div>
