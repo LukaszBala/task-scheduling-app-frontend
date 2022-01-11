@@ -2,29 +2,15 @@ import React from 'react';
 import './TaskColumn.scss';
 import {Draggable, Droppable} from "react-beautiful-dnd";
 import TaskItem from "../TaskItem/TaskItem";
+import {ColumnModel} from "../../store/models/column.model";
 
-export interface ColumnModel {
-    name: string;
-    items: ColumnItemModel[]
-}
-
-export interface ColumnItemModel {
-    id: number | string;
-    content: string;
-}
-
-export interface TaskColumnModel {
-    item: ColumnModel,
-    itemId: string | number;
-}
-
-const TaskColumn = (props: TaskColumnModel) => {
+const TaskColumn = (props: ColumnModel) => {
     return (
         <div className="TaskColumn" data-testid="TaskColumn">
             <div className="task-column-title">
-                {props.item.name}
+                {props.name}
             </div>
-            <Droppable droppableId={String(props.itemId)} key={String(props.itemId)}>
+            <Droppable droppableId={String(props.id)} key={String(props.id)}>
                 {(provided, snapshot) =>
                     <div {...provided.droppableProps}
                          ref={provided.innerRef}
@@ -33,7 +19,7 @@ const TaskColumn = (props: TaskColumnModel) => {
                             ? "lightblue"
                             : "lightgrey"
                     }}>
-                        {props.item.items.map((item, idx) => <Draggable key={String(item.id)}
+                        {props.items.map((item, idx) => <Draggable key={String(item.id)}
                                                                         draggableId={String(item.id)}
                                                                         index={idx}>{((provided, snapshot) => <div
                             ref={provided.innerRef}

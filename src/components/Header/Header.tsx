@@ -9,6 +9,7 @@ import {useNavigate} from "react-router";
 const Header = () => {
     const dispatch = useAppDispatch()
     const logged = useAppSelector((state) => state.auth.logged)
+    const user = useAppSelector((state) => state.auth.user)
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -21,6 +22,7 @@ const Header = () => {
             {logged && <div className={'header-right'}>
                 <div className="user">
                     <AccountCircleIcon className={'user-icon'}/>
+                    {user?.username}
                 </div>
                 <Button variant={'contained'} color={'warning'} onClick={() => handleLogout()}>Logout</Button>
             </div>}

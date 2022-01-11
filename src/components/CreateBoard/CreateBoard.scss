@@ -1,0 +1,84 @@
+.CreateBoard {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.create-board-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  margin: 20px;
+  padding: 10px;
+  box-shadow: 0 0 1px #888;
+  border-radius: 2px;
+
+  .board-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px 0;
+    padding: 0 10px;
+
+    .add-column {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      font-size: 20px;
+
+      .add-icon {
+        margin-left: 10px;
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    .save-btn {
+      font-size: 20px;
+      padding: 10px 15px;
+    }
+  }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 auto;
+    width: 100%;
+
+    .task-column {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      margin: 10px;
+      color: #222222;
+      box-sizing: border-box;
+    }
+
+
+
+    .task-column-title {
+      background-color: #fff;
+      height: 60px;
+      padding: 10px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      box-shadow: 0 0 1px #888;
+      border-radius: 2px;
+    }
+
+    .task-column-content {
+      background-color: #fff;
+      box-sizing: border-box;
+      height:100%;
+      box-shadow: 0 0 1px #888;
+      border-radius: 2px;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './Login.scss';
 import {useAppDispatch} from "../../hooks";
-import {login} from '../../store/slices/authSlice';
+import {login, setUserData} from '../../store/slices/authSlice';
 import {Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput} from "@mui/material";
 import {customFetch} from "../../utils/actions";
 import {backendUrl} from "../../shared/options";
@@ -34,10 +34,20 @@ const Login = () => {
         await customFetch(`${backendUrl}auth/login`, {
             method: 'POST',
             body: JSON.stringify({login: userLogin, password})
-        }).then((res: any) => res.json()).then((res) => {
-            localStorage.setItem('token', res.access_token);
+        }).then((res: any) => res.json()).then(async (res) => {
             setShowError(false);
-            dispatch(login());
+            await customFetch(`${backendUrl}auth/user`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${res.access_token}`
+                }
+            }).then((res2: any) => res2.json()).then((res2) => {
+                dispatch(setUserData(res2));
+            }).catch(() => {
+            })
+            dispatch(login({
+                token: `Bearer ${res.access_token}`
+            }));
         }).catch((err: any) => {
             if (String(err.status).match('^40.')) {
                 setShowError(true);
@@ -57,7 +67,8 @@ const Login = () => {
                         <div className="login-wrapper">
                             <h2>Please Log In</h2>
                             <form onSubmit={handleSubmit}>
-                                <FormControl className={'form-field login-form'} sx={{m: 1, width: '25ch'}} variant="outlined">
+                                <FormControl className={'form-field login-form'} sx={{m: 1, width: '25ch'}}
+                                             variant="outlined">
                                     <InputLabel htmlFor="outlined-login">Login</InputLabel>
                                     <OutlinedInput
                                         id="outlined-login"
@@ -67,7 +78,8 @@ const Login = () => {
                                         label="Login"
                                     />
                                 </FormControl>
-                                <FormControl className={'form-field password-form'} sx={{m: 1, width: '25ch'}} variant="outlined">
+                                <FormControl className={'form-field password-form'} sx={{m: 1, width: '25ch'}}
+                                             variant="outlined">
                                     <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                                     <OutlinedInput
                                         id="outlined-adornment-password"
@@ -103,7 +115,8 @@ const Login = () => {
                 <div className="option-wrapper">
                     <div className="other-options">
                         <h2>Does not have an account yet?</h2>
-                        <Button variant={'contained'} color={'success'} onClick={() => navigate('/register')}>register</Button>
+                        <Button variant={'contained'} color={'success'}
+                                onClick={() => navigate('/register')}>register</Button>
                     </div>
                 </div>
             </div>

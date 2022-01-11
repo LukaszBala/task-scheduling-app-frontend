@@ -24,10 +24,16 @@
 
 .user {
   margin: 0 10px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-right: 1px solid rgba(#ccc, 0.5);
   border-left: 1px solid rgba(#ccc, 0.5);
+
   .user-icon {
     width: 40px;
     height: 40px;
+    margin-right: 5px;
   }
 }

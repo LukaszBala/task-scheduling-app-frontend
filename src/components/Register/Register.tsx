@@ -159,7 +159,7 @@ const Register = () => {
             </div>
         </div>
         <ConfirmationDialog
-            id="ringtone-menu"
+            id="register"
             keepMounted
             open={open}
             onClose={handleClose}
