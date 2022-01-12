@@ -1,10 +1,10 @@
 import {Navigate} from 'react-router-dom';
-import RootContainer from "./components/RootContainer/RootContainer";
-import Login from "./components/Login/Login";
-import Register from "./components/Register/Register";
+import RootContainer from "./components/Layout/RootContainer/RootContainer";
+import Login from "./components/Authentication/Login/Login";
+import Register from "./components/Authentication/Register/Register";
 import Authentication from "./components/Authentication/Authentication";
-import CreateBoard from "./components/CreateBoard/CreateBoard";
-import TaskBoard from "./components/TaskBoard/TaskBoard";
+import CreateBoard from "./components/Board/CreateBoard/CreateBoard";
+import TaskBoard from "./components/Board/TaskBoard/TaskBoard";
 
 const routes = (isLoggedIn: boolean) => [
     {

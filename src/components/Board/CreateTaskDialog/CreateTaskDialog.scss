@@ -1,0 +1,16 @@
+.CreateTaskDialog {
+  .dialog-content {
+    min-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .task-dialog-text-field {
+      margin: 20px;
+      width: 100%;
+    }
+  }
+}
+
+

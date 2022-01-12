@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import './App.scss';
 import './shared/styles.scss';
-import Header from "./components/Header/Header";
+import Header from "./components/Layout/Header/Header";
 import {useAppDispatch, useAppSelector} from "./hooks";
 import {createTheme, ThemeProvider} from "@mui/material";
 import {useRoutes} from "react-router-dom";
 import routes from "./routes";
 import {customFetch} from "./utils/actions";
 import {backendUrl} from "./shared/options";
-import {login, setUserData} from './store/slices/authSlice';
+import {login, setUserData} from './store/auth/authSlice';
 
 function App() {
 

@@ -1,0 +1,73 @@
+.TaskBoard {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.task-board-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 auto;
+  max-height: 100%;
+  margin: 20px;
+  padding: 10px;
+  box-shadow: 0 0 1px #888;
+  border-radius: 2px;
+
+  .board-name-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px 0;
+    padding: 0 10px;
+    font-size: 30px;
+  }
+
+  .board-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px 0;
+
+    .left-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-direction: row;
+
+      .users-list {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+
+        .UserAvatar {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .column-container {
+    display: block;
+    width: 100%;
+    flex: 1 1 auto;
+    height: 400px;
+
+    .columns {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      flex: 1 1 auto;
+      width: 100%;
+      max-height: 100%;
+      height: 100%;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import {Action, configureStore, Dispatch, MiddlewareAPI} from '@reduxjs/toolkit'
-import authReducer from "./slices/authSlice";
-import boardReducer from "./slices/boardSlice";
+import authReducer from "./auth/authSlice";
+import boardReducer from "./board/boardSlice";
 
 const logger = (store: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     console.group(action.type)
