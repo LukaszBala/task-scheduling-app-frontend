@@ -2,6 +2,8 @@ import {createSlice} from "@reduxjs/toolkit";
 import {BoardModel} from "./models/board.model";
 import {TaskModel} from "./models/task.model";
 import {ColumnModel} from "./models/column.model";
+import {usersMock} from "../../users.mock";
+import {BoardUserModel} from "./models/board-user.model";
 
 const itemsFromBackend: TaskModel[] = [
     {id: 1, name: "First task", columnId: '0'},
@@ -55,6 +57,9 @@ interface BoardState {
 const initialState: BoardState = {
     boards: [{
         id: '0',
+        users: usersMock.map(user => {
+            return {...user, role: ''};
+        }),
         name: 'Initial board',
         columns: columnsFromBackend
     }]
@@ -70,7 +75,7 @@ export const boardSlice = createSlice({
                     column.boardId = id;
                     return column;
                 })
-                state.boards.push({id, name: data.payload.name, columns: newColumns});
+                state.boards.push({id, name: data.payload.name, columns: newColumns, users: []});
             },
             addTask: (state, data) => {
                 const newTask: TaskModel = data.payload.task;
@@ -135,11 +140,20 @@ export const boardSlice = createSlice({
             setBoardColumns: (state, data) => {
                 const boardIndex = state.boards.findIndex(board => board.id === data.payload.boardId);
                 state.boards[boardIndex].columns = data.payload.columns;
+            },
+            updateBoardUser: (state, data) => {
+                const updatedUser: BoardUserModel = data.payload.user;
+                const boardIndex = state.boards.findIndex(board => board.id === data.payload.boardId);
+                if (boardIndex != null) {
+                    const board = state.boards[boardIndex];
+                    const userIndex = board.users.findIndex(user => user.userId === updatedUser.userId);
+                    state.boards[boardIndex].users[userIndex] = updatedUser;
+                }
             }
         }
     }
 );
 
-export const {addBoard, updateTaskContent, addTask, moveTask, setBoardColumns} = boardSlice.actions;
+export const {addBoard, updateTaskContent, addTask, moveTask, setBoardColumns, updateBoardUser} = boardSlice.actions;
 
 export default boardSlice.reducer;

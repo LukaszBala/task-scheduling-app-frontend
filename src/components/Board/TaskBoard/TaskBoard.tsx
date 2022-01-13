@@ -3,11 +3,11 @@ import './TaskBoard.scss';
 import TaskColumn from "../TaskColumn/TaskColumn";
 import {DragDropContext} from "react-beautiful-dnd";
 import {Button, FormControl, InputAdornment, InputLabel, OutlinedInput} from "@mui/material";
-import {Add, Search} from "@mui/icons-material";
+import {Add, Search, Settings} from "@mui/icons-material";
 import UserAvatar from "../../Users/UserAvatar/UserAvatar";
 import {ColumnModel} from "../../../store/board/models/column.model";
 import {useAppDispatch, useAppSelector} from "../../../hooks";
-import {useParams} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import {TaskModel} from "../../../store/board/models/task.model";
 import CreateTaskDialog from "../CreateTaskDialog/CreateTaskDialog";
 import {BoardModel} from "../../../store/board/models/board.model";
@@ -67,6 +67,7 @@ const TaskBoard = () => {
     const {id} = useParams();
     const [open, setOpen] = React.useState(false);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const handleClose = (task?: TaskModel) => {
         if (task) {
@@ -74,6 +75,15 @@ const TaskBoard = () => {
         }
         setOpen(false);
     };
+
+    const goToBoardSettings = () => {
+        const boardId = id || board?.id;
+        if (id) {
+            navigate(`../board-settings/${id}`);
+        } else {
+            navigate(`../board-settings/${board?.id}`)
+        }
+    }
 
     useEffect(() => {
         if (!id) {
@@ -98,8 +108,9 @@ const TaskBoard = () => {
     return (
         <div className="TaskBoard" data-testid="TaskBoard">
             <div className="task-board-content">
-                <div className="board-name-container">
+                <div className="board-top-top-container">
                     {board?.name}
+                    <Button onClick={() => goToBoardSettings()}><Settings className={'board-settings-icon'}/></Button>
                 </div>
                 <div className={'board-top'}>
                     <div className="left-bar">

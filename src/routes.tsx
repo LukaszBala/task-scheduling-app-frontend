@@ -5,6 +5,7 @@ import Register from "./components/Authentication/Register/Register";
 import Authentication from "./components/Authentication/Authentication";
 import CreateBoard from "./components/Board/CreateBoard/CreateBoard";
 import TaskBoard from "./components/Board/TaskBoard/TaskBoard";
+import BoardSettings from "./components/Board/BoardSettings/BoardSettings";
 
 const routes = (isLoggedIn: boolean) => [
     {
@@ -14,7 +15,12 @@ const routes = (isLoggedIn: boolean) => [
             // { path: '/dashboard', element: <Dashboard /> },
             // { path: '/account', element: <Account /> },
             {path: 'board', element: <TaskBoard/>},
-            {path: 'board/:id', element: <TaskBoard/>},
+            {
+                path: 'board/:id', element: <TaskBoard/>
+            },
+            {
+                path: 'board-settings/:id', element: <BoardSettings/>
+            },
             {path: 'create', element: <CreateBoard/>},
             {path: '', element: <Navigate to="/app/board"/>},
             {path: '*', element: <Navigate to="/app/board"/>},
