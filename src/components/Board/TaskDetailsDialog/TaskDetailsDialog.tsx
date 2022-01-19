@@ -3,12 +3,15 @@ import './TaskDetailsDialog.scss';
 import {TaskModel} from "../../../store/board/models/task.model";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField} from "@mui/material";
 import {Add, Clear, Save} from "@mui/icons-material";
+import {BoardUserModel} from "../../../store/board/models/board-user.model";
+import {useAppSelector} from "../../../hooks";
 
 export interface TaskDetailsDialogPros {
     id: string;
     keepMounted: boolean;
     open: boolean;
     task: TaskModel;
+    boardId: string;
     onClose: (value?: TaskModel) => void;
 }
 
@@ -24,17 +27,13 @@ const initState: TaskModel = {
     assignee: ''
 }
 
-const availUsers = [
-    {id: '1', name: 'Maciek'},
-    {id: '2', name: 'Stasiek'}
-]
-
 const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
-    const {onClose, open, task, ...other} = props;
+    const {onClose, open, boardId, task, ...other} = props;
 
     const [taskDetails, setTaskDetails] = useState<TaskModel>(initState);
     const [showCommentField, setShowCommentField] = useState(false);
     const [commentContent, setCommentContent] = useState('');
+    const board = useAppSelector(state => state.board.boards.find(board => board.id === boardId))
 
     const handleClose = () => {
         onClose();
@@ -105,11 +104,15 @@ const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
                         onChange={event => setProperty('assignee', event.target.value)}
                         helperText="Please select assignee"
                     >
-                        {availUsers.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
-                                {option.name}
+                        <MenuItem className={'no-assignee'} value={''}>
+                            No assignee
+                        </MenuItem>
+                        {board?.users.map((option) => (
+                            <MenuItem key={option.userId} value={option.userId}>
+                                {option.username}
                             </MenuItem>
                         ))}
+
                     </TextField>
                     <TextField
                         className={'task-dialog-text-field'}

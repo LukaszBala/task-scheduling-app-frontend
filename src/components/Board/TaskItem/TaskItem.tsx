@@ -3,7 +3,10 @@ import './TaskItem.scss';
 import {TaskModel} from "../../../store/board/models/task.model";
 import {useAppDispatch} from "../../../hooks";
 import TaskDetailsDialog from "../TaskDetailsDialog/TaskDetailsDialog";
-import {updateTaskContent} from '../../../store/board/boardSlice'
+import {setSingleBoard} from '../../../store/board/boardSlice'
+import {setLoading} from '../../../store/app/appSlice';
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
 
 export interface TaskItemProps {
     item: TaskModel;
@@ -16,10 +19,22 @@ const TaskItem = (props: TaskItemProps) => {
     const [open, setOpen] = React.useState(false);
     const dispatch = useAppDispatch();
 
-    const handleClose = (task?: TaskModel) => {
+    const handleClose = async (task?: TaskModel) => {
         setOpen(false);
         if (task) {
-            dispatch(updateTaskContent({task, boardId: props.boardId}));
+            dispatch(setLoading(true));
+            await customFetch(`${backendUrl}board/task/edit`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    boardId: props.boardId,
+                    task
+                })
+            }).then()
+                .then((res2: any) => res2.json())
+                .then(result => {
+                    dispatch(setSingleBoard(result));
+                    dispatch(setLoading(false));
+                }).catch(err => dispatch(setLoading(false)));
         }
     };
 
@@ -35,6 +50,7 @@ const TaskItem = (props: TaskItemProps) => {
                 id="register"
                 keepMounted={false}
                 task={props.item}
+                boardId={props.boardId}
                 open={open}
                 onClose={handleClose}
             />

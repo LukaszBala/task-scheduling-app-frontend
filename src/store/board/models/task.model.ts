@@ -5,4 +5,6 @@ export interface TaskModel {
     description?: string;
     comments?: string[];
     assignee?: string;
+    createdBy?: string;
+    createdDate?: number;
 }

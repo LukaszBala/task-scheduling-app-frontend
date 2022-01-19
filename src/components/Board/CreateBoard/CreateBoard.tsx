@@ -58,8 +58,8 @@ const CreateBoard = () => {
                 </div>
 
                 <div className="columns">
-                    {columns.map((column =>
-                        <div className="task-column">
+                    {columns.map(((column, idx) =>
+                        <div key={idx} className="task-column">
                             <div className="task-column-title">
                                 {column.name}
                             </div>
