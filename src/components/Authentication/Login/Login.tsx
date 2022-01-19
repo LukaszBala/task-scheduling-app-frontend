@@ -7,6 +7,8 @@ import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {useNavigate} from "react-router";
+import {setLoading} from '../../../store/app/appSlice';
+import {setBoards} from '../../../store/board/boardSlice';
 
 const Login = () => {
 
@@ -35,6 +37,7 @@ const Login = () => {
             method: 'POST',
             body: JSON.stringify({login: userLogin, password})
         }).then((res: any) => res.json()).then(async (res) => {
+            dispatch(setLoading(true));
             setShowError(false);
             await customFetch(`${backendUrl}auth/user`, {
                 method: 'GET',
@@ -45,6 +48,16 @@ const Login = () => {
                 dispatch(setUserData(res2));
             }).catch(() => {
             })
+            await customFetch(`${backendUrl}board`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${res.access_token}`
+                }
+            }).then((res2: any) => res2.json()).then((res2) => {
+                dispatch(setBoards(res2));
+            }).catch(() => {
+            })
+            dispatch(setLoading(false));
             dispatch(login({
                 token: `Bearer ${res.access_token}`
             }));

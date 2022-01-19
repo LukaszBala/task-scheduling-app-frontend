@@ -6,7 +6,7 @@ function updateOptions(options: any, token?: string) {
     if (update.headers.Authorization) return update;
     let localToken: any = ''
     if (!token) {
-        localToken = `Bearer ${localStorage.getItem('token')}`;
+        localToken = `${localStorage.getItem('token')}`;
     }
     if (token || localToken) {
         update.headers = {
@@ -17,7 +17,7 @@ function updateOptions(options: any, token?: string) {
     return update;
 }
 
-export function customFetch(url: string, options: RequestInit, token?: string) {
+export function customFetch(url: string, options?: RequestInit, token?: string) {
     return new Promise((resolve, reject) => {
         fetch(url, updateOptions(options, token))
             .then((response) => {

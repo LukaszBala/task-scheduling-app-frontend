@@ -1,1 +1,18 @@
-.AddUserDialog {}
+.AddUserDialog {
+
+  .form-field {
+    margin: 10px;
+  }
+
+  .role-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    .select-role {
+      width: 150px;
+    }
+  }
+
+}

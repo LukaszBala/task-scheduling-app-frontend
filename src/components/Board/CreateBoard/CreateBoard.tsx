@@ -5,7 +5,9 @@ import {Add} from "@mui/icons-material";
 import CreateColumnDialog from "../CreateColumnDialog/CreateColumnDialog";
 import {ColumnModel} from "../../../store/board/models/column.model";
 import {useAppDispatch} from "../../../hooks";
-import {addBoard} from '../../../store/board/boardSlice';
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
+import {setLoading} from '../../../store/app/appSlice';
 
 const CreateBoard = () => {
 
@@ -25,7 +27,13 @@ const CreateBoard = () => {
     };
 
     const saveBoard = () => {
-        dispatch(addBoard({name, columns}));
+        console.log(columns);
+        dispatch(setLoading(true))
+        customFetch(`${backendUrl}board`, {
+            method: 'POST',
+            body: JSON.stringify({name, columns})
+        }).then(() => dispatch(setLoading(false)));
+        // dispatch(addBoard({name, columns}));
     }
 
     return (

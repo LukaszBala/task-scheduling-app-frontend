@@ -7,18 +7,16 @@ import {Add, Search, Settings} from "@mui/icons-material";
 import UserAvatar from "../../Users/UserAvatar/UserAvatar";
 import {ColumnModel} from "../../../store/board/models/column.model";
 import {useAppDispatch, useAppSelector} from "../../../hooks";
-import {useLocation, useNavigate, useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {TaskModel} from "../../../store/board/models/task.model";
 import CreateTaskDialog from "../CreateTaskDialog/CreateTaskDialog";
 import {BoardModel} from "../../../store/board/models/board.model";
-import {addTask, setBoardColumns} from '../../../store/board/boardSlice';
+import {setSingleBoard} from '../../../store/board/boardSlice';
+import {setLoading} from '../../../store/app/appSlice';
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
 
-const users = [
-    {name: 'maciek długi'},
-    {name: 'henryk krótki'}
-]
-
-const onDragEnd = (result: any, columns: ColumnModel[], setColumns: any, dispatch: any, board: any) => {
+const onDragEnd = async (result: any, columns: ColumnModel[], setColumns: any, dispatch: any, board: any) => {
     if (!result.destination) return;
     const {source, destination} = result;
     // dispatch(moveTask({
@@ -28,6 +26,8 @@ const onDragEnd = (result: any, columns: ColumnModel[], setColumns: any, dispatc
     //     destIndex: destination.index,
     //     boardId: board.id
     // }))
+
+    let newColumns;
 
     if (source.droppableId !== destination.droppableId) {
 
@@ -42,21 +42,39 @@ const onDragEnd = (result: any, columns: ColumnModel[], setColumns: any, dispatc
         removed.columnId = destColumn.id;
         destItems.splice(destination.index, 0, removed);
 
-        const newColumns = columns.slice();
+        newColumns = columns.slice();
         newColumns[sourceIdx] = {...newColumns[sourceIdx], items: sourceItems}
         newColumns[destIdx] = {...newColumns[destIdx], items: destItems}
         setColumns(newColumns);
-        dispatch(setBoardColumns({columns: newColumns, boardId: board.id}))
     } else {
         const sourceIdx = columns.findIndex(col => col.id === source.droppableId);
         const column = columns[sourceIdx];
         const copiedItems = [...column.items];
         const [removed] = copiedItems.splice(source.index, 1);
         copiedItems.splice(destination.index, 0, removed);
-        const newColumns = columns.slice();
+        newColumns = columns.slice();
         newColumns[sourceIdx] = {...newColumns[sourceIdx], items: copiedItems}
         setColumns(newColumns);
-        dispatch(setBoardColumns({columns: newColumns, boardId: board.id}))
+    }
+
+    if (newColumns) {
+        dispatch(setLoading(true));
+        await customFetch(`${backendUrl}board/task/move`, {
+            method: 'POST',
+            body: JSON.stringify({
+                boardId: board?.id,
+                sourceColumnId: source.droppableId,
+                destColumnId: destination.droppableId,
+                sourceTaskIndex: source.index,
+                destTaskIndex: destination.index
+            })
+        }).then(async () => await customFetch(`${backendUrl}board/${board!.id}`)
+            .then((res2: any) => res2.json())
+            .then(result => {
+                dispatch(setLoading(false));
+                dispatch(setSingleBoard(result));
+            }).catch(err => dispatch(setLoading(false))
+            )).catch(err => dispatch(setLoading(false)));
     }
 };
 
@@ -69,15 +87,21 @@ const TaskBoard = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleClose = (task?: TaskModel) => {
+    const addNewTask = async (task?: TaskModel) => {
         if (task) {
-            dispatch(addTask({task, boardId: board?.id}))
+            dispatch(setLoading(true));
+            await customFetch(`${backendUrl}board/task`, {
+                method: 'POST', body: JSON.stringify({boardId: board?.id, task})
+            }).then(async () => await customFetch(`${backendUrl}board/${board!.id}`)
+                .then((res2: any) => res2.json())
+                .then(result => dispatch(setSingleBoard(result)))
+            )
+            dispatch(setLoading(false));
         }
         setOpen(false);
     };
 
     const goToBoardSettings = () => {
-        const boardId = id || board?.id;
         if (id) {
             navigate(`../board-settings/${id}`);
         } else {
@@ -101,8 +125,12 @@ const TaskBoard = () => {
             setBoard(searchedBoard);
             return;
         }
-        setColumns(boards[0].columns);
-        setBoard(boards[0]);
+        if (boards.length) {
+            setColumns(boards[0].columns);
+            setBoard(boards[0]);
+        } else {
+            navigate('../home');
+        }
     }, [id, boards])
 
     return (
@@ -127,7 +155,7 @@ const TaskBoard = () => {
                             />
                         </FormControl>
                         <div className="users-list">
-                            {users.map(user => <UserAvatar name={user.name}/>)}
+                            {board?.users.map((user, idx) => <UserAvatar key={idx} name={user.username}/>)}
 
                         </div>
                     </div>
@@ -152,7 +180,7 @@ const TaskBoard = () => {
                 keepMounted
                 open={open}
                 columns={columns}
-                onClose={handleClose}
+                onClose={addNewTask}
             />
         </div>
     )

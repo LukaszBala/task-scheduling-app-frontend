@@ -1,74 +1,29 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {BoardModel} from "./models/board.model";
 import {TaskModel} from "./models/task.model";
 import {ColumnModel} from "./models/column.model";
-import {usersMock} from "../../users.mock";
 import {BoardUserModel} from "./models/board-user.model";
-
-const itemsFromBackend: TaskModel[] = [
-    {id: 1, name: "First task", columnId: '0'},
-    {id: 2, name: "Second task", columnId: '0'},
-    {id: 3, name: "Third task", columnId: '0'},
-    {id: 4, name: "Fourth task", columnId: '0'},
-    {id: 5, name: "Fifth task", columnId: '0'},
-    {id: 6, name: "First task", columnId: '0'},
-    {id: 7, name: "Second task", columnId: '0'},
-    {id: 8, name: "Third task", columnId: '0'},
-    {id: 9, name: "Fourth task", columnId: '0'},
-    {id: 10, name: "Fifth task", columnId: '0'},
-    {id: 11, name: "First task", columnId: '0'},
-    {id: 12, name: "Second task", columnId: '0'},
-    {id: 13, name: "Third task", columnId: '0'},
-    {id: 14, name: "Fourth task", columnId: '0'},
-    {id: 15, name: "Fifth task", columnId: '0'}
-];
-
-const columnsFromBackend: ColumnModel[] = [
-    {
-        id: '0',
-        boardId: '0',
-        name: "Requested",
-        items: itemsFromBackend
-    },
-    {
-        id: '1',
-        boardId: '0',
-        name: "To do",
-        items: []
-    },
-    {
-        id: '2',
-        boardId: '0',
-        name: "In Progress",
-        items: []
-    },
-    {
-        id: '3',
-        boardId: '0',
-        name: "Done",
-        items: []
-    }
-]
 
 interface BoardState {
     boards: BoardModel[];
 }
 
 const initialState: BoardState = {
-    boards: [{
-        id: '0',
-        users: usersMock.map(user => {
-            return {...user, role: ''};
-        }),
-        name: 'Initial board',
-        columns: columnsFromBackend
-    }]
+    boards: [
+    ]
 }
 
 export const boardSlice = createSlice({
         name: 'board',
         initialState,
         reducers: {
+            setBoards: (state, data) => {
+                state.boards = data.payload
+            },
+            setSingleBoard: (state, data: PayloadAction<BoardModel>) => {
+                const idx = state.boards.findIndex(board => board.id === data.payload.id);
+                state.boards[idx] = data.payload;
+            },
             addBoard: (state, data) => {
                 const id = `temp_${state.boards.length}`;
                 const newColumns = data.payload.columns.map((column: ColumnModel) => {
@@ -154,6 +109,15 @@ export const boardSlice = createSlice({
     }
 );
 
-export const {addBoard, updateTaskContent, addTask, moveTask, setBoardColumns, updateBoardUser} = boardSlice.actions;
+export const {
+    setBoards,
+    setSingleBoard,
+    addBoard,
+    updateTaskContent,
+    addTask,
+    moveTask,
+    setBoardColumns,
+    updateBoardUser
+} = boardSlice.actions;
 
 export default boardSlice.reducer;

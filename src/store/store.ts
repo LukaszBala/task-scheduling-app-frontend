@@ -1,6 +1,7 @@
 import {Action, configureStore, Dispatch, MiddlewareAPI} from '@reduxjs/toolkit'
 import authReducer from "./auth/authSlice";
 import boardReducer from "./board/boardSlice";
+import appReducer from "./app/appSlice";
 
 const logger = (store: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     console.group(action.type)
@@ -14,6 +15,7 @@ const logger = (store: MiddlewareAPI) => (next: Dispatch) => (action: Action) =>
 
 const store = configureStore({
     reducer: {
+        app: appReducer,
         auth: authReducer,
         board: boardReducer
     },

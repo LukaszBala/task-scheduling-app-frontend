@@ -1,7 +1,18 @@
 import React, {useState} from 'react';
 import './AddUserDialog.scss';
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    MenuItem,
+    TextField
+} from "@mui/material";
 import {BoardUserModel} from "../../../store/board/models/board-user.model";
+import {BoardRoleEnum} from "../../../store/board/models/board-role.enum";
+import {BoardUtils} from "../../../store/board/board.utils";
 
 export interface AddUserDialogProps {
     id: string;
@@ -10,13 +21,15 @@ export interface AddUserDialogProps {
     onClose: (value?: BoardUserModel) => void;
 }
 
-const initialUser = {username: '', email: '', role: '', userId: ''};
+const initialUser = {username: '', email: '', role: BoardRoleEnum.USER, userId: ''};
 
 const AddUserDialog = (props: AddUserDialogProps) => {
     const {onClose, open, ...other} = props;
 
     const [user, setUser] = useState<BoardUserModel>(initialUser);
     const [search, setSearch] = useState<string>('');
+
+    const boardRoles = BoardUtils.getAssignableRoles();
 
     const handleClose = () => {
         onClose();
@@ -32,14 +45,20 @@ const AddUserDialog = (props: AddUserDialogProps) => {
 
     }
 
+    const setUserRole = (user: BoardUserModel, role: BoardRoleEnum) => {
+        const newUser = {...user, role};
+        setUser(newUser);
+    }
+
     return (
-        <Dialog open={open} {...other} onClose={handleClose}>
+        <Dialog className={'AddUserDialog'} open={open} {...other} onClose={handleClose}>
             <DialogTitle>Add User</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     please provide email or username:
                 </DialogContentText>
                 <TextField
+                    className={'form-field'}
                     autoFocus
                     margin="dense"
                     id="name"
@@ -50,6 +69,22 @@ const AddUserDialog = (props: AddUserDialogProps) => {
                     variant="standard"
                     onChange={(event) => searchForUser(event.target.value)}
                 />
+                <div className="role-container">
+                    <TextField
+                        className={'form-field select-role'}
+                        id="outlined-select-role"
+                        select
+                        label="Role"
+                        value={user.role}
+                        onChange={event => setUserRole(user, event.target.value as BoardRoleEnum)}
+                    >
+                        {boardRoles.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>

@@ -6,6 +6,7 @@ import Authentication from "./components/Authentication/Authentication";
 import CreateBoard from "./components/Board/CreateBoard/CreateBoard";
 import TaskBoard from "./components/Board/TaskBoard/TaskBoard";
 import BoardSettings from "./components/Board/BoardSettings/BoardSettings";
+import Home from "./components/Home/Home";
 
 const routes = (isLoggedIn: boolean) => [
     {
@@ -14,7 +15,7 @@ const routes = (isLoggedIn: boolean) => [
         children: [
             // { path: '/dashboard', element: <Dashboard /> },
             // { path: '/account', element: <Account /> },
-            {path: 'board', element: <TaskBoard/>},
+            {path: 'home', element: <Home/>},
             {
                 path: 'board/:id', element: <TaskBoard/>
             },
@@ -22,8 +23,8 @@ const routes = (isLoggedIn: boolean) => [
                 path: 'board-settings/:id', element: <BoardSettings/>
             },
             {path: 'create', element: <CreateBoard/>},
-            {path: '', element: <Navigate to="/app/board"/>},
-            {path: '*', element: <Navigate to="/app/board"/>},
+            {path: '', element: <Navigate to="/app/home"/>},
+            {path: '*', element: <Navigate to="/app/home"/>},
             // {
             //     path: 'member',
             //     element: <Outlet />,

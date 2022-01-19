@@ -9,6 +9,7 @@ import {BoardUserModel} from "../../../store/board/models/board-user.model";
 import {BoardRoleEnum} from "../../../store/board/models/board-role.enum";
 import {updateBoardUser} from "../../../store/board/boardSlice";
 import AddUserDialog from "../AddUserDialog/AddUserDialog";
+import {BoardUtils} from "../../../store/board/board.utils";
 
 const BoardSettings = () => {
 
@@ -16,7 +17,7 @@ const BoardSettings = () => {
     const [board, setBoard] = useState<BoardModel>();
     const [open, setOpen] = useState(false);
     const {id} = useParams();
-    const boardRoles = Object.keys(BoardRoleEnum);
+    const boardRoles = BoardUtils.getAssignableRoles();
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -80,13 +81,16 @@ const BoardSettings = () => {
                                     select
                                     label="Role"
                                     value={user.role}
+                                    disabled={board?.createdBy === user.userId}
                                     onChange={event => setUserRole(user, event.target.value as BoardRoleEnum)}
                                 >
-                                    {boardRoles.map((option) => (
+                                    {board?.createdBy !== user.userId ? boardRoles.map((option) => (
                                         <MenuItem key={option} value={option}>
                                             {option}
                                         </MenuItem>
-                                    ))}
+                                    )) : <MenuItem key={BoardRoleEnum.CREATOR} value={BoardRoleEnum.CREATOR}>
+                                        {BoardRoleEnum.CREATOR}
+                                    </MenuItem>}
                                 </TextField>
                             </div>
 

@@ -15,7 +15,7 @@ const SideNav = () => {
                 <Button onClick={() => navigate('create')}>Create Board</Button>
             </div>
             <div className="boards-list">
-                {boards.map(board => <Button onClick={() => navigate(`board/${board.id}`)}>{board.name}</Button>)}
+                {boards.map((board, idx) => <Button key={idx} onClick={() => navigate(`board/${board.id}`)}>{board.name}</Button>)}
 
             </div>
 

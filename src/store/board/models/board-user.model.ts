@@ -1,6 +1,8 @@
+import {BoardRoleEnum} from "./board-role.enum";
+
 export interface BoardUserModel {
     username: string;
     email: string;
-    role: string;
+    role: BoardRoleEnum;
     userId: string;
 }
