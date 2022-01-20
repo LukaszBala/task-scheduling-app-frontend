@@ -7,9 +7,12 @@ import {BoardModel} from "../../../store/board/models/board.model";
 import {useNavigate, useParams} from "react-router";
 import {BoardUserModel} from "../../../store/board/models/board-user.model";
 import {BoardRoleEnum} from "../../../store/board/models/board-role.enum";
-import {updateBoardUser} from "../../../store/board/boardSlice";
+import {setSingleBoard, updateBoardUser} from "../../../store/board/boardSlice";
 import AddUserDialog from "../AddUserDialog/AddUserDialog";
 import {BoardUtils} from "../../../store/board/board.utils";
+import {setLoading} from "../../../store/app/appSlice";
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
 
 const BoardSettings = () => {
 
@@ -31,9 +34,22 @@ const BoardSettings = () => {
         dispatch(updateBoardUser({user: newUser, boardId: board?.id}));
     }
 
-    const handleClose = (user?: BoardUserModel) => {
-        console.log(user);
+    const addUser = async (user?: BoardUserModel) => {
         setOpen(false);
+        if (user) {
+            dispatch(setLoading(true));
+            await customFetch(`${backendUrl}board/${board?.id}/add-user`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    userId: user.userId, role: user.role
+                })
+            }).then()
+                .then((res2: any) => res2.json())
+                .then(result => {
+                    dispatch(setSingleBoard(result));
+                    dispatch(setLoading(false));
+                }).catch(err => dispatch(setLoading(false)));
+        }
     }
 
     useEffect(() => {
@@ -102,7 +118,7 @@ const BoardSettings = () => {
                 id="user"
                 keepMounted
                 open={open}
-                onClose={handleClose}
+                onClose={addUser}
             />
         </div>
     )

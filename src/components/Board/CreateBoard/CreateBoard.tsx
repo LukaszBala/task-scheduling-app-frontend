@@ -27,7 +27,6 @@ const CreateBoard = () => {
     };
 
     const saveBoard = () => {
-        console.log(columns);
         dispatch(setLoading(true))
         customFetch(`${backendUrl}board`, {
             method: 'POST',

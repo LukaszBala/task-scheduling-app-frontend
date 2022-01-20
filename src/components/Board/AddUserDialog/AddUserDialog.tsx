@@ -1,7 +1,10 @@
 import React, {useState} from 'react';
 import './AddUserDialog.scss';
 import {
+    Autocomplete,
     Button,
+    CircularProgress,
+    debounce,
     Dialog,
     DialogActions,
     DialogContent,
@@ -13,6 +16,9 @@ import {
 import {BoardUserModel} from "../../../store/board/models/board-user.model";
 import {BoardRoleEnum} from "../../../store/board/models/board-role.enum";
 import {BoardUtils} from "../../../store/board/board.utils";
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
+import {UserSearchModel} from "./usear-search.model"
 
 export interface AddUserDialogProps {
     id: string;
@@ -21,34 +27,85 @@ export interface AddUserDialogProps {
     onClose: (value?: BoardUserModel) => void;
 }
 
-const initialUser = {username: '', email: '', role: BoardRoleEnum.USER, userId: ''};
-
 const AddUserDialog = (props: AddUserDialogProps) => {
     const {onClose, open, ...other} = props;
-
-    const [user, setUser] = useState<BoardUserModel>(initialUser);
-    const [search, setSearch] = useState<string>('');
+    const [userRole, setUserRole] = useState<BoardRoleEnum>(BoardRoleEnum.USER);
+    const [value, setValue] = React.useState<UserSearchModel | null>(null);
+    const [inputValue, setInputValue] = React.useState('');
+    const [lastValue, setLastValue] = React.useState('');
+    const [options, setOptions] = React.useState<UserSearchModel[]>([]);
+    const [listLoading, setListLoading] = React.useState(false);
 
     const boardRoles = BoardUtils.getAssignableRoles();
 
     const handleClose = () => {
         onClose();
-        setUser(initialUser);
+        setUserRole(BoardRoleEnum.USER);
+        setValue(null);
     };
 
     const handleAdd = () => {
-        onClose(user);
-        setUser(initialUser);
+        if (value) {
+            onClose({userId: value.userId, username: value.username, email: value.email, role: userRole});
+        } else {
+            onClose();
+        }
+        setUserRole(BoardRoleEnum.USER);
+        setValue(null);
     };
 
-    const searchForUser = (query: string) => {
+    const fetch = React.useMemo(
+        () =>
+            debounce(
+                (
+                    request: { input: string },
+                    callback: (results?: readonly UserSearchModel[]) => void,
+                ) => {
+                    customFetch(`${backendUrl}users?` + new URLSearchParams({
+                        name: request.input,
+                    }))
+                        .then((res2: any) => res2.json())
+                        .then(result => {
+                            callback(result);
+                        }).catch(err => setListLoading(false));
+                },
+                200,
+            ),
+        [],
+    );
 
-    }
+    React.useEffect(() => {
+        let active = true;
 
-    const setUserRole = (user: BoardUserModel, role: BoardRoleEnum) => {
-        const newUser = {...user, role};
-        setUser(newUser);
-    }
+        if (inputValue === '' || lastValue === inputValue) {
+            setLastValue(inputValue);
+            setListLoading(false);
+            setOptions(value ? [value] : []);
+            return undefined;
+        }
+        setLastValue(inputValue);
+
+        setListLoading(true);
+        fetch({input: inputValue}, (results?: readonly UserSearchModel[]) => {
+            if (active) {
+                let newOptions: UserSearchModel[] = [];
+
+                if (value) {
+                    newOptions = [value];
+                }
+
+                if (results) {
+                    newOptions = [...newOptions, ...results];
+                }
+                setListLoading(false);
+                setOptions(newOptions);
+            }
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [value, inputValue, fetch]);
 
     return (
         <Dialog className={'AddUserDialog'} open={open} {...other} onClose={handleClose}>
@@ -57,17 +114,36 @@ const AddUserDialog = (props: AddUserDialogProps) => {
                 <DialogContentText>
                     please provide email or username:
                 </DialogContentText>
-                <TextField
-                    className={'form-field'}
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Name"
-                    type="text"
-                    value={search}
-                    fullWidth
-                    variant="standard"
-                    onChange={(event) => searchForUser(event.target.value)}
+                <Autocomplete
+                    id="google-map-demo"
+                    getOptionLabel={(option) =>
+                        typeof option === 'string' ? option : option.label
+                    }
+                    filterOptions={(x) => x}
+                    options={options}
+                    autoComplete
+                    includeInputInList
+                    filterSelectedOptions
+                    loading={listLoading}
+                    value={value}
+                    onChange={(event: any, newValue: UserSearchModel | null) => {
+                        setOptions(newValue ? [newValue, ...options] : options);
+                        setValue(newValue);
+                    }}
+                    onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                    }}
+                    renderInput={(params) => (
+                        <TextField className={'form-field'} {...params} label="Name" InputProps={{
+                            ...params.InputProps,
+                            endAdornment: (
+                                <React.Fragment>
+                                    {listLoading ? <CircularProgress color="inherit" size={20}/> : null}
+                                    {params.InputProps.endAdornment}
+                                </React.Fragment>
+                            ),
+                        }}/>
+                    )}
                 />
                 <div className="role-container">
                     <TextField
@@ -75,8 +151,8 @@ const AddUserDialog = (props: AddUserDialogProps) => {
                         id="outlined-select-role"
                         select
                         label="Role"
-                        value={user.role}
-                        onChange={event => setUserRole(user, event.target.value as BoardRoleEnum)}
+                        value={userRole}
+                        onChange={event => setUserRole(event.target.value as BoardRoleEnum)}
                     >
                         {boardRoles.map((option) => (
                             <MenuItem key={option} value={option}>
