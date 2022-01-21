@@ -7,7 +7,7 @@ import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {useNavigate} from "react-router";
-import {setLoading} from '../../../store/app/appSlice';
+import {setLoading, setSnackbar} from '../../../store/app/appSlice';
 import {setBoards} from '../../../store/board/boardSlice';
 
 const Login = () => {
@@ -46,7 +46,10 @@ const Login = () => {
                 }
             }).then((res2: any) => res2.json()).then((res2) => {
                 dispatch(setUserData(res2));
-            }).catch(() => {
+            }).catch((err) => {
+                if (!String(err.status).match('^40.')) {
+                    dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                }
             })
             await customFetch(`${backendUrl}board`, {
                 method: 'GET',
@@ -55,7 +58,10 @@ const Login = () => {
                 }
             }).then((res2: any) => res2.json()).then((res2) => {
                 dispatch(setBoards(res2));
-            }).catch(() => {
+            }).catch((err) => {
+                if (!String(err.status).match('^40.')) {
+                    dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                }
             })
             dispatch(setLoading(false));
             dispatch(login({
@@ -65,7 +71,7 @@ const Login = () => {
             if (String(err.status).match('^40.')) {
                 setShowError(true);
             } else {
-                alert('server error');
+                dispatch(setSnackbar({open: true, message: 'Server error!'}))
                 setShowError(false);
             }
 

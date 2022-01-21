@@ -7,16 +7,19 @@ import {BoardModel} from "../../../store/board/models/board.model";
 import {useNavigate, useParams} from "react-router";
 import {BoardUserModel} from "../../../store/board/models/board-user.model";
 import {BoardRoleEnum} from "../../../store/board/models/board-role.enum";
-import {setSingleBoard, updateBoardUser} from "../../../store/board/boardSlice";
+import {setSingleBoard} from "../../../store/board/boardSlice";
 import AddUserDialog from "../AddUserDialog/AddUserDialog";
 import {BoardUtils} from "../../../store/board/board.utils";
-import {setLoading} from "../../../store/app/appSlice";
+import {setLoading, setSnackbar} from "../../../store/app/appSlice";
 import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
+import {UserModel} from "../../../store/auth/user.model";
+import {logout} from "../../../store/auth/authSlice";
 
 const BoardSettings = () => {
 
     const boards = useAppSelector((state) => state.board.boards);
+    const currentUser: UserModel | undefined = useAppSelector((state) => state.auth.user);
     const [board, setBoard] = useState<BoardModel>();
     const [open, setOpen] = useState(false);
     const {id} = useParams();
@@ -29,9 +32,26 @@ const BoardSettings = () => {
         navigate(`../board/${id}`)
     }
 
-    const setUserRole = (user: BoardUserModel, role: BoardRoleEnum) => {
-        const newUser = {...user, role};
-        dispatch(updateBoardUser({user: newUser, boardId: board?.id}));
+    const setUserRole = async (user: BoardUserModel, role: BoardRoleEnum) => {
+        dispatch(setLoading(true));
+        await customFetch(`${backendUrl}board/${board?.id}/change-user-role`, {
+            method: 'POST',
+            body: JSON.stringify({
+                userId: user.userId, role
+            })
+        }).then()
+            .then((res2: any) => res2.json())
+            .then(result => {
+                dispatch(setSingleBoard(result));
+                dispatch(setLoading(false));
+            }).catch(err => {
+                if (err.status === 401) {
+                    dispatch(logout());
+                } else if (!String(err.status).match('^40.')) {
+                    dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                }
+                dispatch(setLoading(false))
+            });
     }
 
     const addUser = async (user?: BoardUserModel) => {
@@ -48,26 +68,28 @@ const BoardSettings = () => {
                 .then(result => {
                     dispatch(setSingleBoard(result));
                     dispatch(setLoading(false));
-                }).catch(err => dispatch(setLoading(false)));
+                }).catch(err => {
+                    if (err.status === 401) {
+                        dispatch(logout());
+                    } else if (!String(err.status).match('^40.')) {
+                        dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                    }
+                    dispatch(setLoading(false))
+                });
         }
     }
 
     useEffect(() => {
-        if (!id) {
-            if (boards.length) {
-                setBoard(boards[0])
-            }
-            return;
-        }
-
         const searchedBoard = boards.find(board => board.id === id);
+        if (searchedBoard && !BoardUtils.adminOrCreator(searchedBoard.role)) {
+            goToBoard();
+        }
 
         if (searchedBoard) {
             setBoard(searchedBoard);
             return;
         }
-        setBoard(boards[0]);
-    }, [id, boards])
+    }, [id, boards, currentUser])
 
     return (
         <div className="BoardSettings">
@@ -117,6 +139,7 @@ const BoardSettings = () => {
             <AddUserDialog
                 id="user"
                 keepMounted
+                boardId={board?.id}
                 open={open}
                 onClose={addUser}
             />

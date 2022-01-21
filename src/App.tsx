@@ -3,14 +3,14 @@ import './App.scss';
 import './shared/styles.scss';
 import Header from "./components/Layout/Header/Header";
 import {useAppDispatch, useAppSelector} from "./hooks";
-import {Backdrop, CircularProgress, createTheme, ThemeProvider} from "@mui/material";
+import {Alert, Backdrop, CircularProgress, createTheme, Snackbar, Stack, ThemeProvider} from "@mui/material";
 import {useRoutes} from "react-router-dom";
 import routes from "./routes";
 import {customFetch} from "./utils/actions";
 import {backendUrl} from "./shared/options";
 import {login, setUserData} from './store/auth/authSlice';
 import {setBoards} from "./store/board/boardSlice";
-import {setLoading} from "./store/app/appSlice";
+import {setLoading, setSnackbar} from "./store/app/appSlice";
 
 function App() {
 
@@ -21,11 +21,17 @@ function App() {
     });
 
     const [initLoading, setInitLoading] = useState(true);
-    const logged = useAppSelector((state) => state.auth.logged)
-    const loadingOverlayEnabled = useAppSelector(state => state.app.loading)
-    const token = useAppSelector((state) => state.auth.token)
+    const logged = useAppSelector((state) => state.auth.logged);
+    const loadingOverlayEnabled = useAppSelector(state => state.app.loading);
+    const snackBarOpened = useAppSelector(state => state.app.snackBarOpen);
+    const snackBarMessage = useAppSelector(state => state.app.snackBarMessage);
+    const token = useAppSelector((state) => state.auth.token);
     const routing = useRoutes(routes(logged));
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        dispatch(setSnackbar({open: false}));
+    };
 
     useEffect(() => {
         let localToken: any = '';
@@ -49,12 +55,20 @@ function App() {
                     }
                 }).then((res2: any) => res2.json()).then((res2) => {
                     dispatch(setBoards(res2));
-                }).catch(() => {
+                }).catch((err) => {
+                    if (!String(err.status).match('^40.')) {
+                        dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                    }
+                    dispatch(setLoading(false));
+                    setInitLoading(false)
                 })
                 dispatch(setLoading(false));
                 dispatch(login(properToken))
                 setInitLoading(false);
-            }).catch(() => {
+            }).catch((err) => {
+                if (!String(err.status).match('^40.')) {
+                    dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                }
                 dispatch(setLoading(false));
                 setInitLoading(false)
             })
@@ -69,11 +83,18 @@ function App() {
                 {!initLoading && <><Header/>{routing}</>}
             </div>
             <Backdrop
-                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                sx={{color: '#fff', zIndex: 2000}}
                 open={loadingOverlayEnabled}
             >
                 <CircularProgress color="inherit"/>
             </Backdrop>
+            <Stack sx={{width: '100%'}}>
+                <Snackbar sx={{width: 'calc(100% - 48px)'}} open={snackBarOpened} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert severity="error" onClose={handleClose} sx={{width: '100%'}}>
+                        {snackBarMessage}
+                    </Alert>
+                </Snackbar>
+            </Stack>
         </ThemeProvider>
     );
 }

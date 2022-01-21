@@ -5,4 +5,5 @@ export interface BoardUserModel {
     email: string;
     role: BoardRoleEnum;
     userId: string;
+    color?: string;
 }

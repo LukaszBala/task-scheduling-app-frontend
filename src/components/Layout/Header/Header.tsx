@@ -3,8 +3,9 @@ import './Header.scss';
 import {Button} from "@mui/material";
 import {useAppDispatch, useAppSelector} from "../../../hooks";
 import {logout} from '../../../store/auth/authSlice';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useNavigate} from "react-router";
+import UserAvatar from "../../Users/UserAvatar/UserAvatar";
+import {BoardUserModel} from "../../../store/board/models/board-user.model";
 
 const Header = () => {
     const dispatch = useAppDispatch()
@@ -21,7 +22,7 @@ const Header = () => {
             <h2 className={'title'}>Not Jira</h2>
             {logged && <div className={'header-right'}>
                 <div className="user">
-                    <AccountCircleIcon className={'user-icon'}/>
+                    <UserAvatar user={user as BoardUserModel}/>
                     {user?.username}
                 </div>
                 <Button variant={'contained'} color={'warning'} onClick={() => handleLogout()}>Logout</Button>
@@ -29,6 +30,6 @@ const Header = () => {
 
         </nav>
     )
-};
+}
 
 export default Header;

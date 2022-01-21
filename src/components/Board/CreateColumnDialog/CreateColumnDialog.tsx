@@ -45,7 +45,7 @@ const CreateColumnDialog = (props: CreateColumnDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAdd}>Add</Button>
+                <Button disabled={!name} onClick={handleAdd}>Add</Button>
             </DialogActions>
         </Dialog>
     );

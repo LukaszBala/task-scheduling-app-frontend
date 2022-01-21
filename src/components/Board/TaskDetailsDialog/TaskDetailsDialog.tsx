@@ -3,8 +3,13 @@ import './TaskDetailsDialog.scss';
 import {TaskModel} from "../../../store/board/models/task.model";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField} from "@mui/material";
 import {Add, Clear, Save} from "@mui/icons-material";
-import {BoardUserModel} from "../../../store/board/models/board-user.model";
-import {useAppSelector} from "../../../hooks";
+import {useAppDispatch, useAppSelector} from "../../../hooks";
+import {setLoading, setSnackbar} from '../../../store/app/appSlice';
+import {customFetch} from "../../../utils/actions";
+import {backendUrl} from "../../../shared/options";
+import {setSingleBoard} from "../../../store/board/boardSlice";
+import {BoardUtils} from "../../../store/board/board.utils";
+import {logout} from "../../../store/auth/authSlice";
 
 export interface TaskDetailsDialogPros {
     id: string;
@@ -34,6 +39,8 @@ const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
     const [showCommentField, setShowCommentField] = useState(false);
     const [commentContent, setCommentContent] = useState('');
     const board = useAppSelector(state => state.board.boards.find(board => board.id === boardId))
+    const currentUser = useAppSelector(state => state.auth.user)
+    const dispatch = useAppDispatch();
 
     const handleClose = () => {
         onClose();
@@ -71,6 +78,30 @@ const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
         }
         setShowCommentField(false);
         setCommentContent('');
+    }
+
+    const deleteTask = async () => {
+        dispatch(setLoading(true));
+        await customFetch(`${backendUrl}board/task/delete`, {
+            method: 'POST',
+            body: JSON.stringify({
+                boardId: board?.id, taskId: taskDetails.id
+            })
+        }).then()
+            .then((res2: any) => res2.json())
+            .then(result => {
+                dispatch(setSingleBoard(result));
+                dispatch(setLoading(false));
+            }).catch(err => {
+                if (err.status === 401) {
+                    dispatch(logout());
+                } else if (!String(err.status).match('^40.')) {
+                    dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                }
+                dispatch(setLoading(false));
+                handleClose();
+            });
+        handleClose();
     }
 
     useEffect(() => {
@@ -118,6 +149,7 @@ const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
                         className={'task-dialog-text-field'}
                         id="outlined-multiline-static"
                         label="Description"
+                        disabled={currentUser?.userId !== taskDetails?.createdBy && !BoardUtils.adminOrCreator(board?.role)}
                         multiline
                         value={taskDetails?.description}
                         rows={4}
@@ -163,8 +195,14 @@ const TaskDetailsDialog = (props: TaskDetailsDialogPros) => {
 
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAdd}>Save</Button>
+                <div className={'bottom-btn-container'}>
+                    {(currentUser?.userId === taskDetails?.createdBy || BoardUtils.adminOrCreator(board?.role)) &&
+                    <Button onClick={deleteTask}>delete</Button>}
+                    <div className="right-btns">
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={handleAdd}>Save</Button>
+                    </div>
+                </div>
             </DialogActions>
         </Dialog>
     );

@@ -21,6 +21,8 @@ const TaskColumn = (props: ColumnModel) => {
                                 ? "lightblue"
                                 : "lightgrey"
                         }}>
+                        <div style={{display: 'none'}}>{provided.placeholder}</div>
+
                         {props.items.map((item, idx) =>
                             <Draggable
                                 key={String(item.id)}
@@ -32,9 +34,6 @@ const TaskColumn = (props: ColumnModel) => {
                                     {...provided.dragHandleProps}
                                     style={{
                                         userSelect: "none",
-                                        // backgroundColor: snapshot.isDragging
-                                        //     ? "whitesmoke"
-                                        //     : "whitesmoke",
                                         ...provided.draggableProps.style
                                     }}
                                 >

@@ -109,7 +109,7 @@ const CreateTaskDialog = (props: CreateTaskDialogPros) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAdd}>Add</Button>
+                <Button disabled={!task.name || !task.columnId} onClick={handleAdd}>Add</Button>
             </DialogActions>
         </Dialog>
     );

@@ -7,7 +7,8 @@ import {ColumnModel} from "../../../store/board/models/column.model";
 import {useAppDispatch} from "../../../hooks";
 import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
-import {setLoading} from '../../../store/app/appSlice';
+import {setLoading, setSnackbar} from '../../../store/app/appSlice';
+import {logout} from "../../../store/auth/authSlice";
 
 const CreateBoard = () => {
 
@@ -31,8 +32,14 @@ const CreateBoard = () => {
         customFetch(`${backendUrl}board`, {
             method: 'POST',
             body: JSON.stringify({name, columns})
-        }).then(() => dispatch(setLoading(false)));
-        // dispatch(addBoard({name, columns}));
+        }).then(() => dispatch(setLoading(false))).catch(err => {
+            if (err.status === 401) {
+                dispatch(logout());
+            } else if (!String(err.status).match('^40.')) {
+                dispatch(setSnackbar({open: true, message: 'Server error!'}))
+            }
+            dispatch(setLoading(false));
+        });
     }
 
     return (
@@ -51,7 +58,8 @@ const CreateBoard = () => {
                         </div>
                         <Add className={'add-icon'}/>
                     </Button>
-                    <Button className={'save-btn'} onClick={() => saveBoard()} color={'success'}
+                    <Button disabled={!name || !columns.length} className={'save-btn'} onClick={() => saveBoard()}
+                            color={'success'}
                             variant={'contained'}>Save</Button>
 
                 </div>

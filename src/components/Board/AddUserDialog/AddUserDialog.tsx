@@ -19,22 +19,29 @@ import {BoardUtils} from "../../../store/board/board.utils";
 import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
 import {UserSearchModel} from "./usear-search.model"
+import {useAppDispatch, useAppSelector} from "../../../hooks";
+import {logout} from "../../../store/auth/authSlice";
+import {setSnackbar} from "../../../store/app/appSlice";
 
 export interface AddUserDialogProps {
     id: string;
     keepMounted: boolean;
     open: boolean;
+    boardId?: string;
     onClose: (value?: BoardUserModel) => void;
 }
 
 const AddUserDialog = (props: AddUserDialogProps) => {
-    const {onClose, open, ...other} = props;
+    const {onClose, open, boardId, ...other} = props;
     const [userRole, setUserRole] = useState<BoardRoleEnum>(BoardRoleEnum.USER);
     const [value, setValue] = React.useState<UserSearchModel | null>(null);
     const [inputValue, setInputValue] = React.useState('');
     const [lastValue, setLastValue] = React.useState('');
     const [options, setOptions] = React.useState<UserSearchModel[]>([]);
     const [listLoading, setListLoading] = React.useState(false);
+
+    const board = useAppSelector(state => state.board.boards.find(board => board.id === boardId));
+    const dispatch = useAppDispatch();
 
     const boardRoles = BoardUtils.getAssignableRoles();
 
@@ -65,9 +72,17 @@ const AddUserDialog = (props: AddUserDialogProps) => {
                         name: request.input,
                     }))
                         .then((res2: any) => res2.json())
-                        .then(result => {
+                        .then((result: UserSearchModel[]) => {
+                            result = result.filter(res => !board?.users.some(user => user.userId === res.userId))
                             callback(result);
-                        }).catch(err => setListLoading(false));
+                        }).catch(err => {
+                        if (err.status === 401) {
+                            dispatch(logout());
+                        } else if (!String(err.status).match('^40.')) {
+                            dispatch(setSnackbar({open: true, message: 'Server error!'}))
+                        }
+                        setListLoading(false)
+                    });
                 },
                 200,
             ),
@@ -164,7 +179,7 @@ const AddUserDialog = (props: AddUserDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAdd}>Add</Button>
+                <Button disabled={!value?.userId || !userRole} onClick={handleAdd}>Add</Button>
             </DialogActions>
         </Dialog>
     );

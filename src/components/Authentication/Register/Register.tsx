@@ -6,6 +6,8 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
 import ConfirmationDialog from "../../Layout/ConfirmationDialog/ConfirmationDialog";
+import {setSnackbar} from "../../../store/app/appSlice";
+import {useAppDispatch} from "../../../hooks";
 
 const Register = () => {
     const [username, setUserName] = useState<string>('');
@@ -16,6 +18,8 @@ const Register = () => {
     const [showError, setShowError] = useState<boolean>(false);
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
+
+    const dispatch = useAppDispatch();
 
 
     const handleClose = (value?: boolean) => {
@@ -53,9 +57,8 @@ const Register = () => {
         }).catch((err: any) => {
             if (String(err.status).match('^40.')) {
                 setShowError(true);
-            } else {
-                console.log(err);
-                alert('server error');
+            } else if (!String(err.status).match('^40.')) {
+                dispatch(setSnackbar({open: true, message: 'Server error!'}))
                 setShowError(false);
             }
 
