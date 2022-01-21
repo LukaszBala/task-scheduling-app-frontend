@@ -29,7 +29,8 @@ type SetPropertyFunction = <T extends keyof TaskModel>(
 const initState: TaskModel = {
     id: '',
     name: '',
-    columnId: ''
+    columnId: '',
+    description: ''
 }
 
 const CreateTaskDialog = (props: CreateTaskDialogPros) => {

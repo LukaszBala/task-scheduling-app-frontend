@@ -119,7 +119,7 @@ const BoardSettings = () => {
                                     select
                                     label="Role"
                                     value={user.role}
-                                    disabled={board?.createdBy === user.userId}
+                                    disabled={board?.createdBy === user.userId || currentUser?.userId === user.userId}
                                     onChange={event => setUserRole(user, event.target.value as BoardRoleEnum)}
                                 >
                                     {board?.createdBy !== user.userId ? boardRoles.map((option) => (

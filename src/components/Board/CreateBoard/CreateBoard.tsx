@@ -9,6 +9,7 @@ import {customFetch} from "../../../utils/actions";
 import {backendUrl} from "../../../shared/options";
 import {setLoading, setSnackbar} from '../../../store/app/appSlice';
 import {logout} from "../../../store/auth/authSlice";
+import {setBoards} from "../../../store/board/boardSlice";
 
 const CreateBoard = () => {
 
@@ -32,7 +33,12 @@ const CreateBoard = () => {
         customFetch(`${backendUrl}board`, {
             method: 'POST',
             body: JSON.stringify({name, columns})
-        }).then(() => dispatch(setLoading(false))).catch(err => {
+        }).then((res: any) => res.json()).then((res) => {
+            dispatch(setBoards(res));
+            setName('');
+            setColumns([]);
+            dispatch(setLoading(false));
+        }).catch(err => {
             if (err.status === 401) {
                 dispatch(logout());
             } else if (!String(err.status).match('^40.')) {
