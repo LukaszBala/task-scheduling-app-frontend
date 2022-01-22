@@ -1,0 +1,33 @@
+.SideNav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 200px;
+  height: 100%;
+  width: 200px;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 0 1px #888;
+  z-index: 10;
+  overflow-y: auto;
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(#ccc, 0.5);
+  }
+
+  .boards-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-bottom: 10px;
+    //border-bottom: 1px solid rgba(#ccc, 0.5);
+  }
+}
+
+

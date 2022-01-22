@@ -1,0 +1,91 @@
+.BoardSettings {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-sizing: border-box;
+
+  .task-board-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 auto;
+    max-height: 100%;
+    margin: 20px;
+    padding: 10px;
+    box-shadow: 0 0 1px #888;
+    border-radius: 2px;
+
+    .board-top-top-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      width: 100%;
+      margin: 10px 0;
+      padding: 0 10px;
+      font-size: 30px;
+
+      .board-settings-icon {
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    .board-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      width: 100%;
+      margin: 10px 0;
+
+      .left-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: row;
+      }
+    }
+
+    .config-users-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      flex: 1 1 auto;
+      height: 400px;
+      padding: 10px;
+      box-shadow: 0 0 1px #888;
+      border-radius: 2px;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .users-title {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .user-item-container {
+        max-width: 300px;
+        padding: 10px;
+        margin: 10px;
+        box-shadow: 0 0 1px #888;
+        border-radius: 2px;
+
+        .role-container {
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-end;
+          width: 100%;
+
+          .select-role {
+            width: 150px;
+          }
+        }
+
+
+      }
+    }
+  }
+}

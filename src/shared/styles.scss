@@ -1,0 +1,12 @@
+html {
+  box-sizing: border-box;
+  background-color: #222;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

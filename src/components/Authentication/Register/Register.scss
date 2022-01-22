@@ -1,0 +1,80 @@
+.Register {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  .option-wrapper {
+    display: block;
+    width: 300px;
+    margin: 20px;
+  }
+
+  .register-container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #888;
+    border-radius: 5px;
+  }
+
+  .register-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+    h2 {
+      margin: 0;
+    }
+
+    p {
+      margin-bottom: 5px;
+    }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .form-field {
+        margin: 10px;
+      }
+
+      .email-form {
+        margin-top: 20px;
+      }
+
+      .error {
+        color: crimson;
+        font-size: 12px;
+        margin-bottom: 10px;
+        opacity: 0;
+      }
+
+      .show {
+        opacity: 1;
+      }
+    }
+  }
+
+  .other-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .register-btn {
+    background-color: limegreen;
+  }
+}
+
+
+
+
